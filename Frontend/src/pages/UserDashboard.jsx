@@ -1,16 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import { Routes, Route, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import DonationHistory from '../components/DonationHistory'
 import DonationModal from '../components/DonationModal'
+import { donationAPI } from '../services/api'
 
 function DashboardHome() {
-  const { user, donations } = useAuth()
+  const { user } = useAuth()
   const [open, setOpen] = useState(false)
-  const myDonations = donations.filter(d => d.userId === user.id)
-  const totalDonated = myDonations.reduce((sum, d) => sum + d.amount, 0)
-  
+  const [stats, setStats] = useState({ total: 0, success: 0, pending: 0, failed: 0 })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchStats()
+  }, [])
+
+  async function fetchStats() {
+    try {
+      const res = await donationAPI.getMyDonations({ limit: 100 })
+      const donations = res.data.donations || []
+
+      const total = donations.reduce((sum, d) => d.status === 'success' ? sum + d.amount : sum, 0)
+      const success = donations.filter(d => d.status === 'success').length
+      const pending = donations.filter(d => d.status === 'pending').length
+      const failed = donations.filter(d => d.status === 'failed').length
+
+      setStats({ total, success, pending, failed })
+    } catch (error) {
+      console.error('Failed to fetch stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
@@ -18,20 +41,22 @@ function DashboardHome() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <p className="text-teal-100 text-sm font-medium mb-1">Welcome back,</p>
-            <h1 className="text-3xl font-semibold mb-2">{user.name}</h1>
+            <h1 className="text-3xl font-semibold mb-2">{user?.firstName} {user?.lastName}</h1>
             <p className="text-teal-100 flex items-center gap-4">
               <span className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                {user.email}
+                {user?.email}
               </span>
-              <span className="flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                {user.phone || 'Not provided'}
-              </span>
+              {user?.phone && (
+                <span className="flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  {user.phone}
+                </span>
+              )}
             </p>
           </div>
           <button onClick={() => setOpen(true)} className="btn-accent flex items-center gap-2 px-6 py-3">
@@ -54,11 +79,13 @@ function DashboardHome() {
             </div>
             <div>
               <p className="text-sm text-stone-500">Total Donated</p>
-              <p className="text-2xl font-semibold text-stone-800">₹{totalDonated.toFixed(2)}</p>
+              <p className="text-2xl font-semibold text-stone-800">
+                {loading ? '...' : `₹${stats.total.toLocaleString()}`}
+              </p>
             </div>
           </div>
         </div>
-        
+
         <div className="card p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -68,11 +95,11 @@ function DashboardHome() {
             </div>
             <div>
               <p className="text-sm text-stone-500">Successful</p>
-              <p className="text-2xl font-semibold text-stone-800">{myDonations.filter(d => d.status === 'Success').length}</p>
+              <p className="text-2xl font-semibold text-stone-800">{loading ? '...' : stats.success}</p>
             </div>
           </div>
         </div>
-        
+
         <div className="card p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
@@ -82,7 +109,7 @@ function DashboardHome() {
             </div>
             <div>
               <p className="text-sm text-stone-500">Pending</p>
-              <p className="text-2xl font-semibold text-stone-800">{myDonations.filter(d => d.status === 'Pending').length}</p>
+              <p className="text-2xl font-semibold text-stone-800">{loading ? '...' : stats.pending}</p>
             </div>
           </div>
         </div>
@@ -114,41 +141,103 @@ function DashboardHome() {
         <DonationHistory limit={5} />
       </div>
 
-      <DonationModal open={open} onClose={() => setOpen(false)} />
+      <DonationModal open={open} onClose={() => { setOpen(false); fetchStats(); }} />
     </div>
   )
 }
 
 function ProfilePage() {
-  const { user } = useAuth()
+  const { user, updateProfile } = useAuth()
+  const [editing, setEditing] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    phone: user?.phone || '',
+    address: user?.address || {}
+  })
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setLoading(true)
+    const result = await updateProfile(form)
+    if (result.success) {
+      setEditing(false)
+    }
+    setLoading(false)
+  }
+
   return (
     <div className="max-w-2xl">
       <h1 className="section-title mb-6">Your Profile</h1>
       <div className="card p-8">
         <div className="flex items-center gap-6 mb-8">
           <div className="w-20 h-20 bg-teal-100 text-teal-700 rounded-2xl flex items-center justify-center text-3xl font-semibold">
-            {user.name?.charAt(0)?.toUpperCase()}
+            {user?.firstName?.charAt(0)?.toUpperCase()}
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-stone-800">{user.name}</h2>
-            <p className="text-stone-500">Donor since {new Date().getFullYear()}</p>
+            <h2 className="text-xl font-semibold text-stone-800">{user?.firstName} {user?.lastName}</h2>
+            <p className="text-stone-500">Member since {new Date(user?.registrationDate).getFullYear()}</p>
           </div>
         </div>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-stone-500 mb-1">Email Address</label>
-            <p className="text-stone-800">{user.email}</p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-stone-500 mb-1">Phone Number</label>
-            <p className="text-stone-800">{user.phone || 'Not provided'}</p>
-          </div>
-        </div>
-        
-        <div className="mt-8 pt-6 border-t border-stone-100">
-          <p className="text-sm text-stone-400">Profile editing is disabled in demo mode.</p>
-        </div>
+
+        {editing ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-stone-500 mb-1">First Name</label>
+                <input
+                  value={form.firstName}
+                  onChange={(e) => setForm(prev => ({ ...prev, firstName: e.target.value }))}
+                  className="input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-stone-500 mb-1">Last Name</label>
+                <input
+                  value={form.lastName}
+                  onChange={(e) => setForm(prev => ({ ...prev, lastName: e.target.value }))}
+                  className="input"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-500 mb-1">Phone</label>
+              <input
+                value={form.phone}
+                onChange={(e) => setForm(prev => ({ ...prev, phone: e.target.value }))}
+                className="input"
+              />
+            </div>
+            <div className="flex gap-3 pt-4">
+              <button type="submit" disabled={loading} className="btn-primary">
+                {loading ? 'Saving...' : 'Save Changes'}
+              </button>
+              <button type="button" onClick={() => setEditing(false)} className="btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-stone-500 mb-1">Email Address</label>
+                <p className="text-stone-800">{user?.email}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-stone-500 mb-1">Phone Number</label>
+                <p className="text-stone-800">{user?.phone || 'Not provided'}</p>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-stone-100">
+              <button onClick={() => setEditing(true)} className="btn-secondary">
+                Edit Profile
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

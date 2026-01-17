@@ -1,49 +1,122 @@
-import React, { createContext, useContext, useState } from 'react'
-import mock from '../mock/data'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { authAPI, userAPI } from '../services/api'
+import toast from 'react-hot-toast'
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [users, setUsers] = useState(mock.users)
-  const [donations, setDonations] = useState(mock.donations)
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  function login({ name, email, phone, role }) {
-    // Mocked login/register: create or reuse user
-    const existing = users.find(u => u.email === email)
-    let active = existing
-    if (!existing) {
-      active = { id: Date.now(), name, email, phone, role }
-      setUsers(prev => [active, ...prev])
+  // Check for existing session on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const savedUser = localStorage.getItem('user')
+
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser))
+      // Verify token is still valid
+      authAPI.getMe()
+        .then(res => {
+          setUser(res.data.user)
+          localStorage.setItem('user', JSON.stringify(res.data.user))
+        })
+        .catch(() => {
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          setUser(null)
+        })
+        .finally(() => setLoading(false))
+    } else {
+      setLoading(false)
     }
-    setUser({ ...active, role })
-    // redirect based on role
-    navigate(role === 'admin' ? '/admin' : '/user')
+  }, [])
+
+  async function login(email, password) {
+    try {
+      const res = await authAPI.login({ email, password })
+      const { token, user: userData } = res.data
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(userData))
+      setUser(userData)
+
+      toast.success('Welcome back!')
+      navigate(userData.role === 'admin' ? '/admin' : '/user')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Login failed'
+      toast.error(message)
+      return { success: false, message }
+    }
   }
 
-  function logout() {
-    setUser(null)
-    navigate('/login')
+  async function register(data) {
+    try {
+      const res = await authAPI.register({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone
+      })
+
+      const { token, user: userData } = res.data
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(userData))
+      setUser(userData)
+
+      toast.success('Registration successful!')
+      navigate('/user')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Registration failed'
+      toast.error(message)
+      return { success: false, message }
+    }
   }
 
-  function addDonation({ userId, amount }) {
-    const statuses = ['Success', 'Pending', 'Failed']
-    const status = statuses[Math.floor(Math.random() * statuses.length)]
-    const donation = {
-      id: Date.now(),
-      userId,
-      amount: Number(amount),
-      status,
-      timestamp: new Date().toISOString()
+  async function logout() {
+    try {
+      await authAPI.logout()
+    } catch (error) {
+      // Ignore logout errors
+    } finally {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      setUser(null)
+      toast.success('Logged out successfully')
+      navigate('/login')
     }
-    setDonations(prev => [donation, ...prev])
-    return donation
+  }
+
+  async function updateProfile(data) {
+    try {
+      const res = await userAPI.updateProfile(data)
+      setUser(res.data.user)
+      localStorage.setItem('user', JSON.stringify(res.data.user))
+      toast.success('Profile updated!')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Update failed'
+      toast.error(message)
+      return { success: false, message }
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ user, users, donations, login, logout, addDonation, setUsers }}>
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      login,
+      register,
+      logout,
+      updateProfile,
+      isAuthenticated: !!user
+    }}>
       {children}
     </AuthContext.Provider>
   )
