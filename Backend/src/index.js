@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const { connectDB } = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
