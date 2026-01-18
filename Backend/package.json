@@ -5,8 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "dev": "node src/index.js",
     "init-db": "node src/scripts/initDb.js",
-    "seed": "node src/scripts/seedData.js"
+    "seed": "node src/scripts/seedData.js",
+    "test-payment": "node src/scripts/testPaymentFlow.js"
   },
   "keywords": [
     "ngo",
@@ -25,6 +27,7 @@
     "express-rate-limit": "^8.2.1",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.3"
+    "mongoose": "^8.0.3",
+    "razorpay": "^2.9.6"
   }
 }

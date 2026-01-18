@@ -8,7 +8,10 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const donationRoutes = require('./routes/donationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const webhookRoutes = require('./routes/webhookRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
+const { paymentErrorHandler } = require('./middleware/paymentErrorHandler');
 
 const app = express();
 
@@ -29,13 +32,16 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/donations', donationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/webhooks', webhookRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Server is running' });
 });
 
-// Error handler
+// Error handlers (payment errors first, then general)
+app.use(paymentErrorHandler);
 app.use(errorHandler);
 
 // Start server
