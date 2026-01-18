@@ -1,6 +1,21 @@
-import React, { useState } from 'react'
-import { donationAPI } from '../services/api'
+import React, { useState, useEffect } from 'react'
+import { paymentAPI } from '../services/api'
 import toast from 'react-hot-toast'
+
+// Load Razorpay script dynamically
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true)
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}
 
 export default function DonationModal({ open, onClose }) {
   const [amount, setAmount] = useState('')
@@ -12,47 +27,91 @@ export default function DonationModal({ open, onClose }) {
 
   const presetAmounts = [100, 500, 1000, 5000]
 
+  useEffect(() => {
+    // Load Razorpay SDK when modal opens
+    if (open) {
+      loadRazorpayScript()
+    }
+  }, [open])
+
   async function handleSubmit(e) {
     e.preventDefault()
     if (!amount || amount < 1) {
-      toast.error('Please enter a valid amount')
+      toast.error('Please enter a valid amount (minimum ₹1)')
       return
     }
 
     setLoading(true)
+    setStep('processing')
+
     try {
-      const res = await donationAPI.initiate({
+      // Check if Razorpay is loaded
+      const isLoaded = await loadRazorpayScript()
+      if (!isLoaded) {
+        throw new Error('Failed to load payment gateway')
+      }
+
+      // Create order on backend
+      const res = await paymentAPI.createOrder({
         amount: Number(amount),
         paymentMethod,
         notes
       })
 
-      setDonation(res.data.donation)
-      setStep('processing')
+      const { razorpayOptions, donation: donationData } = res.data
+      setDonation(donationData)
 
-      // For sandbox mode, simulate payment after 2 seconds
-      setTimeout(async () => {
-        try {
-          // Randomly succeed or fail for demo purposes
-          const status = Math.random() > 0.2 ? 'success' : 'failed'
-          await donationAPI.simulatePayment(res.data.donation._id, status)
-          setStep('result')
-          setDonation(prev => ({ ...prev, status }))
+      // Open Razorpay checkout
+      const razorpay = new window.Razorpay({
+        ...razorpayOptions,
+        handler: async function (response) {
+          // Payment successful, verify on backend
+          try {
+            const verifyRes = await paymentAPI.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              donationId: donationData._id
+            })
 
-          if (status === 'success') {
-            toast.success('Donation successful! Thank you for your contribution.')
-          } else {
-            toast.error('Payment failed. Please try again.')
+            setDonation(verifyRes.data.donation)
+            setStep('result')
+            toast.success('Payment successful! Thank you for your donation.')
+          } catch (error) {
+            console.error('Verification failed:', error)
+            setStep('result')
+            setDonation(prev => ({ ...prev, status: 'failed' }))
+            toast.error('Payment verification failed. Please contact support.')
           }
-        } catch (error) {
-          console.error('Simulation error:', error)
-          setStep('result')
-          setDonation(prev => ({ ...prev, status: 'failed' }))
+        },
+        modal: {
+          ondismiss: function () {
+            // User closed the payment modal
+            console.log('Payment modal closed')
+            setStep('form')
+            setLoading(false)
+            toast.error('Payment cancelled')
+          }
+        },
+        theme: {
+          color: '#0d9488' // Teal color matching the app
         }
-      }, 2000)
+      })
+
+      razorpay.on('payment.failed', function (response) {
+        console.error('Payment failed:', response.error)
+        setStep('result')
+        setDonation(prev => ({ ...prev, status: 'failed' }))
+        toast.error(response.error.description || 'Payment failed')
+      })
+
+      razorpay.open()
+      setLoading(false)
 
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to initiate donation')
+      console.error('Payment error:', error)
+      toast.error(error.response?.data?.message || 'Failed to initiate payment')
+      setStep('form')
       setLoading(false)
     }
   }
@@ -70,7 +129,7 @@ export default function DonationModal({ open, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={handleClose}></div>
+      <div className="absolute inset-0 bg-black/50" onClick={step !== 'processing' ? handleClose : undefined}></div>
 
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
         {/* Header */}
@@ -81,11 +140,13 @@ export default function DonationModal({ open, onClose }) {
               {step === 'processing' && 'Processing Payment'}
               {step === 'result' && (donation?.status === 'success' ? 'Thank You!' : 'Payment Failed')}
             </h2>
-            <button onClick={handleClose} className="text-stone-400 hover:text-stone-600">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            {step !== 'processing' && (
+              <button onClick={handleClose} className="text-stone-400 hover:text-stone-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
@@ -137,6 +198,9 @@ export default function DonationModal({ open, onClose }) {
                     </button>
                   ))}
                 </div>
+                <p className="text-xs text-stone-400 mt-2">
+                  You'll be redirected to Razorpay secure checkout
+                </p>
               </div>
 
               <div>
@@ -153,10 +217,36 @@ export default function DonationModal({ open, onClose }) {
               <button
                 type="submit"
                 disabled={loading || !amount}
-                className="btn-primary w-full py-3 disabled:opacity-50"
+                className="btn-primary w-full py-3 disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {loading ? 'Processing...' : `Donate ₹${amount || '0'}`}
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Pay ₹{amount || '0'} Securely
+                  </>
+                )}
               </button>
+
+              <div className="flex items-center justify-center gap-4 text-xs text-stone-400">
+                <span className="flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  Secured by Razorpay
+                </span>
+                <span>•</span>
+                <span>PCI DSS Compliant</span>
+              </div>
             </form>
           )}
 
@@ -166,8 +256,8 @@ export default function DonationModal({ open, onClose }) {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              <p className="text-stone-600">Processing your donation...</p>
-              <p className="text-sm text-stone-400 mt-2">Please wait while we confirm your payment</p>
+              <p className="text-stone-600">Connecting to payment gateway...</p>
+              <p className="text-sm text-stone-400 mt-2">Please complete the payment in the Razorpay window</p>
             </div>
           )}
 
@@ -181,7 +271,12 @@ export default function DonationModal({ open, onClose }) {
                     </svg>
                   </div>
                   <h3 className="text-xl font-semibold text-stone-800 mb-2">Donation Successful!</h3>
-                  <p className="text-stone-600">Your donation of ₹{donation?.amount} has been received.</p>
+                  <p className="text-stone-600 mb-4">Your donation of ₹{donation?.amount} has been received.</p>
+                  {donation?.receiptNumber && (
+                    <p className="text-sm text-stone-500">
+                      Receipt: <span className="font-mono">{donation.receiptNumber}</span>
+                    </p>
+                  )}
                 </>
               ) : (
                 <>

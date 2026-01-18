@@ -58,6 +58,14 @@ export const donationAPI = {
     simulatePayment: (id, status) => api.post(`/donations/${id}/simulate-payment`, { status })
 };
 
+// Payment API (Razorpay)
+export const paymentAPI = {
+    createOrder: (data) => api.post('/payments/create-order', data),
+    verifyPayment: (data) => api.post('/payments/verify', data),
+    getStatus: (donationId) => api.get(`/payments/status/${donationId}`),
+    syncStatus: (donationId) => api.post(`/payments/sync/${donationId}`)
+};
+
 // Admin API
 export const adminAPI = {
     getDashboard: () => api.get('/admin/dashboard'),
