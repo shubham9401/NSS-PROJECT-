@@ -5,6 +5,8 @@ export default function LoginRegister() {
   const { login, register } = useAuth()
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [selectedRole, setSelectedRole] = useState('user') // 'user' or 'admin'
+  const [error, setError] = useState('')
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -15,16 +17,21 @@ export default function LoginRegister() {
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    setError('') // Clear error when user types
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
     if (isLogin) {
-      await login(form.email, form.password)
+      const result = await login(form.email, form.password, selectedRole)
+      if (!result.success && result.roleError) {
+        setError(result.message)
+      }
     } else {
-      await register(form)
+      await register({ ...form, role: selectedRole })
     }
 
     setLoading(false)
@@ -123,6 +130,51 @@ export default function LoginRegister() {
                 minLength={6}
               />
             </div>
+
+            {/* Role Selector */}
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-3">Sign in as</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setSelectedRole('user'); setError(''); }}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 font-medium transition-all ${
+                    selectedRole === 'user'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-stone-200 text-stone-600 hover:border-stone-300 hover:bg-stone-50'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  User
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSelectedRole('admin'); setError(''); }}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 font-medium transition-all ${
+                    selectedRole === 'admin'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-stone-200 text-stone-600 hover:border-stone-300 hover:bg-stone-50'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  Admin
+                </button>
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"

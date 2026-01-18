@@ -34,10 +34,19 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  async function login(email, password) {
+  async function login(email, password, expectedRole = null) {
     try {
       const res = await authAPI.login({ email, password })
       const { token, user: userData } = res.data
+
+      // Validate role if expectedRole is provided
+      if (expectedRole && userData.role !== expectedRole) {
+        const roleLabel = expectedRole === 'admin' ? 'Admin' : 'User'
+        const actualRoleLabel = userData.role === 'admin' ? 'an Admin' : 'a User'
+        const message = `Access denied. You selected ${roleLabel} but this account is ${actualRoleLabel}.`
+        toast.error(message)
+        return { success: false, message, roleError: true }
+      }
 
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(userData))
