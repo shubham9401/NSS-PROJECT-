@@ -19,7 +19,6 @@ const loadRazorpayScript = () => {
 
 export default function DonationModal({ open, onClose }) {
   const [amount, setAmount] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('upi')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
   const [donation, setDonation] = useState(null)
@@ -54,7 +53,6 @@ export default function DonationModal({ open, onClose }) {
       // Create order on backend
       const res = await paymentAPI.createOrder({
         amount: Number(amount),
-        paymentMethod,
         notes
       })
 
@@ -163,8 +161,8 @@ export default function DonationModal({ open, onClose }) {
                       type="button"
                       onClick={() => setAmount(preset)}
                       className={`py-2 px-3 rounded-lg border-2 text-sm font-medium transition-colors ${amount == preset
-                          ? 'border-teal-500 bg-teal-50 text-teal-700'
-                          : 'border-stone-200 hover:border-stone-300 text-stone-600'
+                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        : 'border-stone-200 hover:border-stone-300 text-stone-600'
                         }`}
                     >
                       ₹{preset}
@@ -181,27 +179,7 @@ export default function DonationModal({ open, onClose }) {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Payment Method</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {['upi', 'card', 'netbanking', 'wallet'].map(method => (
-                    <button
-                      key={method}
-                      type="button"
-                      onClick={() => setPaymentMethod(method)}
-                      className={`py-2 px-3 rounded-lg border-2 text-sm font-medium capitalize transition-colors ${paymentMethod === method
-                          ? 'border-teal-500 bg-teal-50 text-teal-700'
-                          : 'border-stone-200 hover:border-stone-300 text-stone-600'
-                        }`}
-                    >
-                      {method}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-xs text-stone-400 mt-2">
-                  You'll be redirected to Razorpay secure checkout
-                </p>
-              </div>
+
 
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-2">Note (Optional)</label>
