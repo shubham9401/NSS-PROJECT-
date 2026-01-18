@@ -69,8 +69,8 @@ export default function RegistrationTable() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-stone-800">Registrations</h1>
-          <p className="text-stone-500">{total} registered users</p>
+          <h1 className="text-2xl font-display font-semibold text-neutral-800">Registrations</h1>
+          <p className="text-neutral-500">{total} registered users</p>
         </div>
         <button onClick={handleExport} className="btn-secondary">
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ export default function RegistrationTable() {
       <div className="card overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
-            <svg className="animate-spin h-8 w-8 text-teal-600 mx-auto" viewBox="0 0 24 24">
+            <svg className="animate-spin h-8 w-8 text-primary-600 mx-auto" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
@@ -131,37 +131,37 @@ export default function RegistrationTable() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-stone-50 border-b border-stone-200">
+              <thead className="bg-neutral-50 border-b border-neutral-200">
                 <tr>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Name</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Email</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Phone</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Location</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Registered</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Status</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Name</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Email</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Phone</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Location</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Registered</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-neutral-100">
                 {users.map(user => (
-                  <tr key={user._id} className="hover:bg-stone-50">
+                  <tr key={user._id} className="hover:bg-neutral-50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center text-sm font-medium">
+                        <div className="w-8 h-8 bg-gradient-to-br from-primary-100 to-primary-200 text-primary-700 rounded-full flex items-center justify-center text-sm font-medium">
                           {user.firstName?.charAt(0)}
                         </div>
-                        <span className="font-medium text-stone-800">{user.firstName} {user.lastName}</span>
+                        <span className="font-medium text-neutral-800">{user.firstName} {user.lastName}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm text-stone-600">{user.email}</td>
-                    <td className="py-3 px-4 text-sm text-stone-600">{user.phone || '-'}</td>
-                    <td className="py-3 px-4 text-sm text-stone-600">
+                    <td className="py-3 px-4 text-sm text-neutral-600">{user.email}</td>
+                    <td className="py-3 px-4 text-sm text-neutral-600">{user.phone || '-'}</td>
+                    <td className="py-3 px-4 text-sm text-neutral-600">
                       {user.address?.city ? `${user.address.city}, ${user.address.state}` : '-'}
                     </td>
-                    <td className="py-3 px-4 text-sm text-stone-600">
+                    <td className="py-3 px-4 text-sm text-neutral-600">
                       {new Date(user.registrationDate).toLocaleDateString()}
                     </td>
                     <td className="py-3 px-4">
-                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${user.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
                         }`}>
                         {user.isActive ? 'Active' : 'Inactive'}
                       </span>
@@ -184,7 +184,7 @@ export default function RegistrationTable() {
           >
             Previous
           </button>
-          <span className="px-4 py-2 text-sm text-stone-600">
+          <span className="px-4 py-2 text-sm text-neutral-600">
             Page {page} of {totalPages}
           </span>
           <button

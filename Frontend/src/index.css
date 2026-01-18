@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -10,63 +10,77 @@ html, body, #root {
 
 /* Base styles for NGO aesthetic */
 body {
-  @apply bg-stone-50 text-stone-800 antialiased;
+  @apply bg-gradient-to-br from-neutral-50 via-white to-primary-50/30 text-neutral-800 antialiased;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 /* Container */
 .container { @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 }
 
-/* Form inputs - calm and accessible */
+/* Form inputs - refined and accessible */
 .input { 
-  @apply w-full border border-stone-300 rounded-lg px-4 py-3 
-         text-stone-800 placeholder-stone-400
-         bg-white
-         focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-400
-         transition-colors duration-200;
+  @apply w-full border border-neutral-200 rounded-xl px-4 py-3.5
+         text-neutral-800 placeholder-neutral-400
+         bg-white/80 backdrop-blur-sm
+         focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-400
+         hover:border-neutral-300
+         transition-all duration-200;
 }
 
-/* Primary button - trustworthy teal */
+/* Primary button - forest green */
 .btn-primary {
   @apply inline-flex items-center justify-center
-         bg-teal-600 text-white font-medium
-         px-5 py-2.5 rounded-lg
-         hover:bg-teal-700 
-         focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2
-         transition-colors duration-200;
+         bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold
+         px-6 py-3 rounded-xl
+         hover:from-primary-700 hover:to-primary-800
+         focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2
+         shadow-soft hover:shadow-lg
+         transition-all duration-200;
 }
 
-/* Secondary button - subtle */
+/* Secondary button - subtle and elegant */
 .btn-secondary {
   @apply inline-flex items-center justify-center
-         bg-stone-100 text-stone-700 font-medium
-         px-5 py-2.5 rounded-lg border border-stone-200
-         hover:bg-stone-200 hover:border-stone-300
-         focus:outline-none focus:ring-2 focus:ring-stone-300 focus:ring-offset-2
-         transition-colors duration-200;
+         bg-white text-neutral-700 font-medium
+         px-6 py-3 rounded-xl border border-neutral-200
+         hover:bg-neutral-50 hover:border-neutral-300 hover:text-neutral-900
+         focus:outline-none focus:ring-2 focus:ring-neutral-200 focus:ring-offset-2
+         shadow-sm hover:shadow
+         transition-all duration-200;
 }
 
-/* Accent button - for donate CTAs */
+/* Accent button - warm amber for donate CTAs */
 .btn-accent {
   @apply inline-flex items-center justify-center
-         bg-orange-500 text-white font-medium
-         px-5 py-2.5 rounded-lg
-         hover:bg-orange-600
-         focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2
-         transition-colors duration-200;
+         bg-gradient-to-r from-accent-500 to-accent-600 text-white font-semibold
+         px-6 py-3 rounded-xl
+         hover:from-accent-600 hover:to-accent-700
+         focus:outline-none focus:ring-2 focus:ring-accent-300 focus:ring-offset-2
+         shadow-soft hover:shadow-lg
+         transition-all duration-200;
 }
 
-/* Card styling */
+/* Card styling - refined with subtle depth */
 .card {
-  @apply bg-white rounded-xl border border-stone-200 shadow-sm;
+  @apply bg-white/90 backdrop-blur-sm rounded-2xl border border-neutral-100 shadow-soft;
 }
 
 /* Section headings */
 .section-title {
-  @apply text-2xl text-stone-800 font-semibold tracking-tight;
+  @apply font-display text-2xl text-neutral-900 font-semibold tracking-tight;
 }
 
 .section-subtitle {
-  @apply text-stone-500 mt-1;
+  @apply text-neutral-500 mt-1;
+}
+
+/* Glass effect */
+.glass {
+  @apply bg-white/70 backdrop-blur-md border border-white/20;
+}
+
+/* Gradient text */
+.text-gradient {
+  @apply bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent;
 }
 

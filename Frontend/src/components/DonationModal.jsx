@@ -92,7 +92,7 @@ export default function DonationModal({ open, onClose }) {
           }
         },
         theme: {
-          color: '#0d9488' // Teal color matching the app
+          color: '#4a8877' // Primary green color matching the app
         }
       })
 
@@ -131,15 +131,15 @@ export default function DonationModal({ open, onClose }) {
 
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
         {/* Header */}
-        <div className="p-6 border-b border-stone-100">
+        <div className="p-6 border-b border-neutral-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-stone-800">
+            <h2 className="text-xl font-display font-semibold text-neutral-800">
               {step === 'form' && 'Make a Donation'}
               {step === 'processing' && 'Processing Payment'}
               {step === 'result' && (donation?.status === 'success' ? 'Thank You!' : 'Payment Failed')}
             </h2>
             {step !== 'processing' && (
-              <button onClick={handleClose} className="text-stone-400 hover:text-stone-600">
+              <button onClick={handleClose} className="text-neutral-400 hover:text-neutral-600 transition-colors">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -153,16 +153,16 @@ export default function DonationModal({ open, onClose }) {
           {step === 'form' && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Select Amount</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Select Amount</label>
                 <div className="grid grid-cols-4 gap-2 mb-3">
                   {presetAmounts.map(preset => (
                     <button
                       key={preset}
                       type="button"
                       onClick={() => setAmount(preset)}
-                      className={`py-2 px-3 rounded-lg border-2 text-sm font-medium transition-colors ${amount == preset
-                        ? 'border-teal-500 bg-teal-50 text-teal-700'
-                        : 'border-stone-200 hover:border-stone-300 text-stone-600'
+                      className={`py-2.5 px-3 rounded-xl border-2 text-sm font-medium transition-all ${amount == preset
+                          ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
+                          : 'border-neutral-200 hover:border-neutral-300 text-neutral-600'
                         }`}
                     >
                       ₹{preset}
@@ -179,10 +179,30 @@ export default function DonationModal({ open, onClose }) {
                 />
               </div>
 
-
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Payment Method</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['upi', 'card', 'netbanking', 'wallet'].map(method => (
+                    <button
+                      key={method}
+                      type="button"
+                      onClick={() => setPaymentMethod(method)}
+                      className={`py-2.5 px-3 rounded-xl border-2 text-sm font-medium capitalize transition-all ${paymentMethod === method
+                          ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
+                          : 'border-neutral-200 hover:border-neutral-300 text-neutral-600'
+                        }`}
+                    >
+                      {method}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-neutral-400 mt-2">
+                  You'll be redirected to Razorpay secure checkout
+                </p>
+              </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Note (Optional)</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Note (Optional)</label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -195,7 +215,7 @@ export default function DonationModal({ open, onClose }) {
               <button
                 type="submit"
                 disabled={loading || !amount}
-                className="btn-primary w-full py-3 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="btn-primary w-full py-3.5 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -215,7 +235,7 @@ export default function DonationModal({ open, onClose }) {
                 )}
               </button>
 
-              <div className="flex items-center justify-center gap-4 text-xs text-stone-400">
+              <div className="flex items-center justify-center gap-4 text-xs text-neutral-400">
                 <span className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -230,12 +250,12 @@ export default function DonationModal({ open, onClose }) {
 
           {step === 'processing' && (
             <div className="text-center py-8">
-              <svg className="animate-spin h-12 w-12 text-teal-600 mx-auto mb-4" viewBox="0 0 24 24">
+              <svg className="animate-spin h-12 w-12 text-primary-600 mx-auto mb-4" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              <p className="text-stone-600">Connecting to payment gateway...</p>
-              <p className="text-sm text-stone-400 mt-2">Please complete the payment in the Razorpay window</p>
+              <p className="text-neutral-600">Connecting to payment gateway...</p>
+              <p className="text-sm text-neutral-400 mt-2">Please complete the payment in the Razorpay window</p>
             </div>
           )}
 
@@ -243,28 +263,28 @@ export default function DonationModal({ open, onClose }) {
             <div className="text-center py-8">
               {donation?.status === 'success' ? (
                 <>
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-soft">
+                    <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-stone-800 mb-2">Donation Successful!</h3>
-                  <p className="text-stone-600 mb-4">Your donation of ₹{donation?.amount} has been received.</p>
+                  <h3 className="text-xl font-display font-semibold text-neutral-800 mb-2">Donation Successful!</h3>
+                  <p className="text-neutral-600 mb-4">Your donation of ₹{donation?.amount} has been received.</p>
                   {donation?.receiptNumber && (
-                    <p className="text-sm text-stone-500">
+                    <p className="text-sm text-neutral-500">
                       Receipt: <span className="font-mono">{donation.receiptNumber}</span>
                     </p>
                   )}
                 </>
               ) : (
                 <>
-                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-soft">
                     <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-stone-800 mb-2">Payment Failed</h3>
-                  <p className="text-stone-600">Something went wrong. Please try again.</p>
+                  <h3 className="text-xl font-display font-semibold text-neutral-800 mb-2">Payment Failed</h3>
+                  <p className="text-neutral-600">Something went wrong. Please try again.</p>
                 </>
               )}
               <button onClick={handleClose} className="btn-primary mt-6">

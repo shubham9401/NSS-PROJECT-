@@ -6,50 +6,54 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary: Soft teal - trustworthy, calm, hopeful
+        // Primary: Deep forest green - trust, growth, nature
         primary: {
-          50: '#f0f9f7',
-          100: '#d9f0eb',
-          200: '#b5e1d8',
-          300: '#84cabe',
-          400: '#56aea0',
-          500: '#3d9486',
-          600: '#2f766c',
-          700: '#295f58',
-          800: '#254d48',
-          900: '#22413d',
+          50: '#f3f8f6',
+          100: '#e0ede8',
+          200: '#c3dbd3',
+          300: '#98c2b5',
+          400: '#6ba392',
+          500: '#4a8877',
+          600: '#3a6d60',
+          700: '#31584f',
+          800: '#2b4842',
+          900: '#263d38',
         },
-        // Secondary: Warm terracotta - human, earthy
-        secondary: {
-          50: '#fdf6f3',
-          100: '#fbeae4',
-          200: '#f7d5c9',
-          300: '#f1b8a4',
-          400: '#e89275',
-          500: '#db6f4d',
-          600: '#c85a3a',
-          700: '#a74830',
-          800: '#893e2c',
-          900: '#713729',
+        // Accent: Warm amber/gold - hope, warmth, generosity
+        accent: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
         },
-        // Neutrals: Warm grays with slight warmth
-        warm: {
-          50: '#fafaf9',
-          100: '#f5f4f2',
-          200: '#e8e6e3',
-          300: '#d6d3ce',
-          400: '#a8a49d',
-          500: '#7c776f',
-          600: '#5f5a53',
-          700: '#4a4641',
-          800: '#3d3a36',
-          900: '#2d2b28',
+        // Neutral: Warm slate
+        neutral: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
         }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Georgia', 'Cambria', 'serif'],
+        display: ['Playfair Display', 'Georgia', 'serif'],
       },
+      boxShadow: {
+        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+        'glow': '0 0 20px rgba(74, 136, 119, 0.15)',
+      }
     }
   },
   plugins: []
