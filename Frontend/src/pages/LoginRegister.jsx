@@ -20,18 +20,54 @@ export default function LoginRegister() {
     setError('') // Clear error when user types
   }
 
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  function isValidPhone(phone) {
+    // Remove spaces, dashes, and +91 prefix if present
+    const cleanPhone = phone.replace(/[\s\-]/g, '').replace(/^\+91/, '')
+    return /^\d{10}$/.test(cleanPhone)
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    if (isLogin) {
-      const result = await login(form.email, form.password, selectedRole)
-      if (!result.success && result.roleError) {
-        setError(result.message)
+    // Validate email format
+    if (!isValidEmail(form.email)) {
+      setError('Please enter a valid email address')
+      setLoading(false)
+      return
+    }
+
+    // Validate phone number for registration
+    if (!isLogin && form.phone && !isValidPhone(form.phone)) {
+      setError('Please enter a valid 10-digit mobile number')
+      setLoading(false)
+      return
+    }
+
+    try {
+      if (isLogin) {
+        const result = await login(form.email, form.password, selectedRole)
+        if (!result.success) {
+          setError(result.message || 'Invalid email or password')
+          setLoading(false)
+          return
+        }
+      } else {
+        const result = await register({ ...form, role: selectedRole })
+        if (result && !result.success) {
+          setError(result.message || 'Registration failed')
+          setLoading(false)
+          return
+        }
       }
-    } else {
-      await register({ ...form, role: selectedRole })
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
     }
 
     setLoading(false)
@@ -199,7 +235,11 @@ export default function LoginRegister() {
             <p className="text-sm text-stone-600">
               {isLogin ? "Don't have an account?" : "Already have an account?"}
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => { 
+                  setIsLogin(!isLogin); 
+                  setError(''); 
+                  setForm({ email: '', password: '', firstName: '', lastName: '', phone: '' });
+                }}
                 className="ml-2 text-teal-600 hover:text-teal-700 font-medium"
               >
                 {isLogin ? 'Sign Up' : 'Sign In'}

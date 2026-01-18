@@ -83,14 +83,18 @@ export default function Layout({ role }) {
       {/* Footer */}
       <footer className="bg-white border-t border-stone-200 mt-auto">
         <div className="container py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-stone-500">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-sm text-stone-500">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-teal-600 rounded-lg flex items-center justify-center">
                 <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
+<<<<<<< Updated upstream
               <span><center>HopeHands Foundation</center></span>
+=======
+              <span>HopeHands Foundation</span>
+>>>>>>> Stashed changes
             </div>
           </div>
         </div>
