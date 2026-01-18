@@ -38,26 +38,25 @@ export default function LoginRegister() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 via-white to-primary-50/30 p-6">
-      {/* Decorative background elements */}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-stone-50 to-teal-50 p-6">
+      {/* Decorative background element */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full opacity-40 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-br from-accent-100 to-accent-200 rounded-full opacity-30 blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-white/80 to-transparent rounded-full"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-teal-100 rounded-full opacity-50"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-orange-100 rounded-full opacity-30"></div>
       </div>
 
       <div className="relative w-full max-w-md">
         {/* Logo / Brand area */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl mb-4 shadow-soft">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-2xl mb-4">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-display font-semibold text-neutral-900">
+          <h1 className="text-3xl font-semibold text-stone-800">
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </h1>
-          <p className="text-neutral-500 mt-2">
+          <p className="text-stone-500 mt-2">
             {isLogin ? 'Sign in to continue making a difference' : 'Join us in making a difference'}
           </p>
         </div>
@@ -69,7 +68,7 @@ export default function LoginRegister() {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1.5">First Name</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">First Name</label>
                     <input
                       name="firstName"
                       onChange={handleChange}
@@ -80,7 +79,7 @@ export default function LoginRegister() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1.5">Last Name</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Last Name</label>
                     <input
                       name="lastName"
                       onChange={handleChange}
@@ -93,7 +92,7 @@ export default function LoginRegister() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number</label>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Phone Number</label>
                   <input
                     name="phone"
                     onChange={handleChange}
@@ -106,7 +105,7 @@ export default function LoginRegister() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Email Address</label>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Email Address</label>
               <input
                 name="email"
                 type="email"
@@ -119,7 +118,7 @@ export default function LoginRegister() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Password</label>
               <input
                 name="password"
                 type="password"
@@ -134,15 +133,15 @@ export default function LoginRegister() {
 
             {/* Role Selector */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-3">Sign in as</label>
+              <label className="block text-sm font-medium text-stone-700 mb-3">Sign in as</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => { setSelectedRole('user'); setError(''); }}
-                  className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-medium transition-all duration-200 ${
+                  className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 font-medium transition-all ${
                     selectedRole === 'user'
-                      ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
-                      : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-stone-200 text-stone-600 hover:border-stone-300 hover:bg-stone-50'
                   }`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,10 +152,10 @@ export default function LoginRegister() {
                 <button
                   type="button"
                   onClick={() => { setSelectedRole('admin'); setError(''); }}
-                  className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-medium transition-all duration-200 ${
+                  className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 font-medium transition-all ${
                     selectedRole === 'admin'
-                      ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
-                      : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-stone-200 text-stone-600 hover:border-stone-300 hover:bg-stone-50'
                   }`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +168,7 @@ export default function LoginRegister() {
 
             {/* Error Message */}
             {error && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -180,7 +179,7 @@ export default function LoginRegister() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -196,12 +195,12 @@ export default function LoginRegister() {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-neutral-100 text-center">
-            <p className="text-sm text-neutral-600">
+          <div className="mt-6 pt-6 border-t border-stone-100 text-center">
+            <p className="text-sm text-stone-600">
               {isLogin ? "Don't have an account?" : "Already have an account?"}
               <button
                 onClick={() => setIsLogin(!isLogin)}
-                className="ml-2 text-primary-600 hover:text-primary-700 font-semibold transition-colors"
+                className="ml-2 text-teal-600 hover:text-teal-700 font-medium"
               >
                 {isLogin ? 'Sign Up' : 'Sign In'}
               </button>
@@ -210,29 +209,23 @@ export default function LoginRegister() {
         </div>
 
         {/* Trust indicators */}
-        <div className="mt-8 flex items-center justify-center gap-8 text-neutral-400 text-sm">
-          <span className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
+        <div className="mt-8 flex items-center justify-center gap-6 text-stone-400 text-sm">
+          <span className="flex items-center gap-1.5">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
             Secure
           </span>
-          <span className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+          <span className="flex items-center gap-1.5">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             Trusted
           </span>
-          <span className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </div>
+          <span className="flex items-center gap-1.5">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
             Non-profit
           </span>
         </div>

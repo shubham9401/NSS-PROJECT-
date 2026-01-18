@@ -3,8 +3,8 @@ import { adminAPI } from '../services/api'
 import toast from 'react-hot-toast'
 
 const statusStyles = {
-  success: 'bg-emerald-100 text-emerald-700',
-  pending: 'bg-amber-100 text-amber-700',
+  success: 'bg-green-100 text-green-700',
+  pending: 'bg-yellow-100 text-yellow-700',
   failed: 'bg-red-100 text-red-700'
 }
 
@@ -83,8 +83,8 @@ export default function DonationTable({ limit }) {
         <>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-display font-semibold text-neutral-800">Donations</h1>
-              <p className="text-neutral-500">{total} total donations</p>
+              <h1 className="text-2xl font-semibold text-stone-800">Donations</h1>
+              <p className="text-stone-500">{total} total donations</p>
             </div>
             <button onClick={handleExport} className="btn-secondary">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,13 +96,13 @@ export default function DonationTable({ limit }) {
 
           {/* Summary Cards */}
           <div className="grid sm:grid-cols-2 gap-4">
-            <div className="card p-4 bg-gradient-to-r from-emerald-50 to-emerald-100/50 border-emerald-200/50">
-              <p className="text-sm text-emerald-600 font-medium">Total Received</p>
-              <p className="text-2xl font-semibold text-emerald-700">₹{totalSuccess.toLocaleString()}</p>
+            <div className="card p-4 bg-green-50 border-green-200">
+              <p className="text-sm text-green-600 font-medium">Total Received</p>
+              <p className="text-2xl font-semibold text-green-700">₹{totalSuccess.toLocaleString()}</p>
             </div>
-            <div className="card p-4 bg-gradient-to-r from-amber-50 to-amber-100/50 border-amber-200/50">
-              <p className="text-sm text-amber-600 font-medium">Pending</p>
-              <p className="text-2xl font-semibold text-amber-700">₹{totalPending.toLocaleString()}</p>
+            <div className="card p-4 bg-yellow-50 border-yellow-200">
+              <p className="text-sm text-yellow-600 font-medium">Pending</p>
+              <p className="text-2xl font-semibold text-yellow-700">₹{totalPending.toLocaleString()}</p>
             </div>
           </div>
 
@@ -160,7 +160,7 @@ export default function DonationTable({ limit }) {
       <div className="card overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
-            <svg className="animate-spin h-8 w-8 text-primary-600 mx-auto" viewBox="0 0 24 24">
+            <svg className="animate-spin h-8 w-8 text-teal-600 mx-auto" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
@@ -168,30 +168,30 @@ export default function DonationTable({ limit }) {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-neutral-50 border-b border-neutral-200">
+              <thead className="bg-stone-50 border-b border-stone-200">
                 <tr>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Donor</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Amount</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Method</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Date</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-600">Receipt</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Donor</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Amount</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Status</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Method</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Date</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-stone-600">Receipt</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-stone-100">
                 {donations.map(donation => (
-                  <tr key={donation._id} className="hover:bg-neutral-50 transition-colors">
+                  <tr key={donation._id} className="hover:bg-stone-50">
                     <td className="py-3 px-4">
                       <div>
-                        <p className="font-medium text-neutral-800">
+                        <p className="font-medium text-stone-800">
                           {donation.isAnonymous ? 'Anonymous' : `${donation.userId?.firstName || ''} ${donation.userId?.lastName || ''}`}
                         </p>
                         {!donation.isAnonymous && (
-                          <p className="text-sm text-neutral-500">{donation.userId?.email}</p>
+                          <p className="text-sm text-stone-500">{donation.userId?.email}</p>
                         )}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm font-semibold text-neutral-800">
+                    <td className="py-3 px-4 text-sm font-medium text-stone-800">
                       ₹{donation.amount?.toLocaleString()}
                     </td>
                     <td className="py-3 px-4">
@@ -199,13 +199,13 @@ export default function DonationTable({ limit }) {
                         {donation.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-sm text-neutral-600 capitalize">
+                    <td className="py-3 px-4 text-sm text-stone-600 capitalize">
                       {donation.paymentMethod}
                     </td>
-                    <td className="py-3 px-4 text-sm text-neutral-600">
+                    <td className="py-3 px-4 text-sm text-stone-600">
                       {new Date(donation.donationDate).toLocaleDateString()}
                     </td>
-                    <td className="py-3 px-4 text-sm text-neutral-500">
+                    <td className="py-3 px-4 text-sm text-stone-500">
                       {donation.receiptNumber || '-'}
                     </td>
                   </tr>
@@ -226,7 +226,7 @@ export default function DonationTable({ limit }) {
           >
             Previous
           </button>
-          <span className="px-4 py-2 text-sm text-neutral-600">
+          <span className="px-4 py-2 text-sm text-stone-600">
             Page {page} of {totalPages}
           </span>
           <button
