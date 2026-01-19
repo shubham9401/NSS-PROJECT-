@@ -73,6 +73,17 @@ const getDashboardStats = async (req, res, next) => {
             .sort({ completedAt: -1 })
             .limit(5);
 
+        // Last 7 days donations for charts
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+        
+        const chartDonations = await Donation.find({
+            donationDate: { $gte: sevenDaysAgo }
+        })
+            .select('amount status donationDate')
+            .sort({ donationDate: -1 });
+
         res.status(200).json({
             success: true,
             dashboard: {
@@ -101,6 +112,9 @@ const getDashboardStats = async (req, res, next) => {
                 recent: {
                     registrations: recentRegistrations,
                     donations: recentDonations
+                },
+                chartData: {
+                    donations: chartDonations
                 }
             }
         });
