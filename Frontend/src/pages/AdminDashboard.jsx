@@ -4,6 +4,7 @@ import { Routes, Route, Link } from 'react-router-dom'
 import { adminAPI } from '../services/api'
 import RegistrationTable from '../components/RegistrationTable'
 import DonationTable from '../components/DonationTable'
+import { DonationLineChart, DonationBarChart } from '../components/DonationChart'
 import toast from 'react-hot-toast'
 
 function DashboardHome() {
@@ -115,6 +116,29 @@ function DashboardHome() {
             </div>
           </div>
           <p className="text-sm text-stone-400 mt-4 pt-4 border-t border-stone-100">Awaiting confirmation</p>
+        </div>
+      </div>
+
+      {/* Donation Charts */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="card p-6">
+          <h2 className="font-semibold text-stone-800 mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+            </svg>
+            Donation Trends (Last 7 Days)
+          </h2>
+          <DonationLineChart donations={dashboard?.chartData?.donations || []} />
+        </div>
+
+        <div className="card p-6">
+          <h2 className="font-semibold text-stone-800 mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Donation Status Breakdown
+          </h2>
+          <DonationBarChart donations={dashboard?.chartData?.donations || []} />
         </div>
       </div>
 
