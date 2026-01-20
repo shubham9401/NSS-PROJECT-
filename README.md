@@ -4,6 +4,18 @@ A full-stack web application for managing NGO registrations and donations with i
 
 ---
 
+## 🌐 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | [https://hopehands-ngo.netlify.app](https://hopehands-ngo.netlify.app) |
+| **Backend API** | [https://hopehands-production.up.railway.app/api](https://hopehands-production.up.railway.app/api) |
+
+### Test Credentials:
+- **Admin**: `testadmin@ngo.org` / `admin123`
+- **User**: `newuser@test.com` / `test123`
+
+---
 
 ## 🚀 Getting Started
 
