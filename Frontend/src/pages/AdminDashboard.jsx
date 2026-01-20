@@ -47,7 +47,7 @@ function DashboardHome() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <div className="card p-6">
           <div className="flex items-start justify-between">
             <div>
@@ -116,6 +116,21 @@ function DashboardHome() {
             </div>
           </div>
           <p className="text-sm text-stone-400 mt-4 pt-4 border-t border-stone-100">Awaiting confirmation</p>
+        </div>
+
+        <div className="card p-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-stone-500 mb-1">Failed</p>
+              <p className="text-3xl font-semibold text-red-600">{dashboard?.donations?.failed || 0}</p>
+            </div>
+            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          <p className="text-sm text-stone-400 mt-4 pt-4 border-t border-stone-100">Payment failed</p>
         </div>
       </div>
 

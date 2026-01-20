@@ -80,15 +80,27 @@ export default function DonationModal({ open, onClose }) {
             setStep('result')
             setDonation(prev => ({ ...prev, status: 'failed' }))
             toast.error('Payment verification failed. Please contact support.')
+            // Mark as failed in backend
+            try {
+              await paymentAPI.markFailed(donationData._id, 'Payment verification failed')
+            } catch (e) {
+              console.error('Error marking payment as failed:', e)
+            }
           }
         },
         modal: {
-          ondismiss: function () {
-            // User closed the payment modal
+          ondismiss: async function () {
+            // User closed the payment modal - mark as failed
             console.log('Payment modal closed')
             setStep('form')
             setLoading(false)
             toast.error('Payment cancelled')
+            // Mark as failed in backend
+            try {
+              await paymentAPI.markFailed(donationData._id, 'User cancelled payment')
+            } catch (e) {
+              console.error('Error marking payment as failed:', e)
+            }
           }
         },
         theme: {
@@ -96,11 +108,17 @@ export default function DonationModal({ open, onClose }) {
         }
       })
 
-      razorpay.on('payment.failed', function (response) {
+      razorpay.on('payment.failed', async function (response) {
         console.error('Payment failed:', response.error)
         setStep('result')
         setDonation(prev => ({ ...prev, status: 'failed' }))
         toast.error(response.error.description || 'Payment failed')
+        // Mark as failed in backend
+        try {
+          await paymentAPI.markFailed(donationData._id, response.error.description || 'Payment failed')
+        } catch (e) {
+          console.error('Error marking payment as failed:', e)
+        }
       })
 
       razorpay.open()

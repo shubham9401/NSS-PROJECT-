@@ -530,6 +530,84 @@ const checkStalePayments = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Mark a payment as failed (called when user cancels or payment fails)
+ * @route   POST /api/payments/mark-failed/:donationId
+ * @access  Private
+ */
+const markFailed = async (req, res, next) => {
+    try {
+        const { donationId } = req.params;
+        const { reason } = req.body;
+
+        const donation = await Donation.findById(donationId);
+
+        if (!donation) {
+            return res.status(404).json({
+                success: false,
+                message: 'Donation not found'
+            });
+        }
+
+        // Check if user owns this donation
+        if (donation.userId.toString() !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized'
+            });
+        }
+
+        // Only update if still pending
+        if (donation.status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot mark as failed - donation is already ${donation.status}`
+            });
+        }
+
+        // Update donation status
+        donation.status = 'failed';
+        await donation.save();
+
+        // Log the failure
+        await PaymentLog.createLog({
+            donationId: donation._id,
+            userId: donation.userId,
+            eventType: 'failed',
+            eventData: {
+                reason: reason || 'Payment failed or cancelled by user',
+                gatewayOrderId: donation.gatewayOrderId
+            },
+            gatewayName: 'razorpay',
+            amount: donation.amount,
+            currency: donation.currency,
+            statusCode: '200',
+            errorMessage: reason || 'Payment failed or cancelled',
+            ipAddress: req.ip,
+            userAgent: req.get('User-Agent')
+        });
+
+        console.log('[Payment] Donation marked as failed:', {
+            donationId: donation._id,
+            reason: reason || 'User action'
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Donation marked as failed',
+            donation: {
+                _id: donation._id,
+                amount: donation.amount,
+                status: donation.status
+            }
+        });
+
+    } catch (error) {
+        console.error('[Payment] Error marking payment as failed:', error);
+        next(error);
+    }
+};
+
 module.exports = {
     createOrder,
     verifyPayment,
@@ -538,5 +616,6 @@ module.exports = {
     syncStatus,
     getAnalytics,
     getRecentActivity,
-    checkStalePayments
+    checkStalePayments,
+    markFailed
 };

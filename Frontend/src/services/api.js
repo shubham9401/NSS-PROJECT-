@@ -67,7 +67,8 @@ export const paymentAPI = {
     createOrder: (data) => api.post('/payments/create-order', data),
     verifyPayment: (data) => api.post('/payments/verify', data),
     getStatus: (donationId) => api.get(`/payments/status/${donationId}`),
-    syncStatus: (donationId) => api.post(`/payments/sync/${donationId}`)
+    syncStatus: (donationId) => api.post(`/payments/sync/${donationId}`),
+    markFailed: (donationId, reason) => api.post(`/payments/mark-failed/${donationId}`, { reason })
 };
 
 // Admin API

@@ -14,7 +14,8 @@ const {
     syncStatus,
     getAnalytics,
     getRecentActivity,
-    checkStalePayments
+    checkStalePayments,
+    markFailed
 } = require('../controllers/paymentController');
 
 // Validation rules for creating order
@@ -91,6 +92,11 @@ router.get('/activity', protect, getRecentActivity);
 // @desc    Check and sync stale pending payments (Admin only)
 // @access  Private/Admin
 router.post('/check-stale', protect, checkStalePayments);
+
+// @route   POST /api/payments/mark-failed/:donationId
+// @desc    Mark a payment as failed (user cancelled or payment failed)
+// @access  Private
+router.post('/mark-failed/:donationId', protect, markFailed);
 
 // @route   GET /api/payments/razorpay/:paymentId
 // @desc    Fetch Razorpay payment details (Admin only)
